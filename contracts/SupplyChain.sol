@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+
 /*
     This exercise has been updated to use Solidity version 0.6
     Breaking changes from 0.5 to 0.6 can be found here:
@@ -55,10 +57,10 @@ contract SupplyChain {
     Each event should accept one argument, the sku */
 
 
-    event LogForSale (uint _sku);
-    event LogSold (uint _sku);
-    event LogShipped (uint _sku);
-    event LogReceived (uint _sku);
+    event LogForSale (uint sku);
+    event LogSold (uint sku);
+    event LogShipped (uint sku);
+    event LogReceived (uint sku);
 
 
 /* Create a modifer that checks if the msg.sender is the owner of the contract */
@@ -140,11 +142,11 @@ modifier verifyCaller (address _address) { // Verify if caller is a buyer or sel
     refunded any excess ether sent.(Arlav comment: These three are modifiers called after the function. )
      Remember to call the event associated with this function!*/
 
-  function buyItem(uint sku) public payable forSale(_sku) paidEnough(items[_sku].price) checkValue(_sku) {
-      emit LogSold(_sku);
-      items[_sku].seller.transfer(items[_sku].price); // Transfer money to the seller
-      items[_sku].buyer = msg.sender; // Set the buyer as the person who called this transaction
-      items[_sku].state = State.Sold; // Set the state to Sold.
+  function buyItem(uint sku) public payable forSale(sku) paidEnough(items[sku].price) checkValue(sku) {
+      emit LogSold(sku);
+      items[sku].seller.transfer(items[sku].price); // Transfer money to the seller
+      items[sku].buyer = msg.sender; // Set the buyer as the person who called this transaction
+      items[sku].state = State.Sold; // Set the state to Sold.
   }
 
   /* Add 2 modifiers to check if the item is sold already, and that the person calling this function
@@ -152,9 +154,9 @@ modifier verifyCaller (address _address) { // Verify if caller is a buyer or sel
    Change the state of the item to shipped. Remember to call the event associated with this function!
    (arlav comments: this takes place within the brackets)
    */
-  function shipItem(uint sku) public sold(_sku) verifyCaller(items[_sku].seller) {
-    emit LogShipped(_sku);
-    items[_sku].state = State.Shipped; // Change the state of the item to shipped.
+  function shipItem(uint sku) public sold(sku) verifyCaller(items[sku].seller) {
+    emit LogShipped(sku);
+    items[sku].state = State.Shipped; // Change the state of the item to shipped.
 
   }
 
@@ -162,10 +164,10 @@ modifier verifyCaller (address _address) { // Verify if caller is a buyer or sel
   /* Add 2 modifiers to check if the item is shipped already, and that the person calling this function
   is the buyer. Change the state of the item to received. Remember to call the event associated with this function!*/
   function receiveItem(uint sku)
-    public shipped(_sku) verifyCaller(items[_sku].buyer)
+    public shipped(sku) verifyCaller(items[sku].buyer)
   {
-    emit LogReceived(_sku);
-    items[_sku].state = State.Received; //change state to received.
+    emit LogReceived(sku);
+    items[sku].state = State.Received; //change state to received.
   }
 
   /* We have these functions completed so we can run tests, just ignore it :) */
@@ -178,6 +180,6 @@ modifier verifyCaller (address _address) { // Verify if caller is a buyer or sel
     seller = items[_sku].seller;
     buyer = items[_sku].buyer;
     return (name, sku, price, state, seller, buyer);
-  } 
+  }
 
 }
